@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>minigame-hub · 收集好游戏，也做自己的游戏</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0b1020;
+    --panel: #131a2e;
+    --board: #101830;
+    --line: rgba(148, 163, 184, 0.08);
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --snake: #34d399;   /* 强调色 1：绿 */
+    --accent: #38bdf8;  /* 强调色 2：蓝 */
+    --food: #fb7185;
+  }
+
+  body {
+    background: radial-gradient(1200px 800px at 50% -10%, #16213c 0%, var(--bg) 60%) var(--bg);
+    color: var(--text);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", -apple-system, "Segoe UI", sans-serif;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  .page {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 24px 20px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+
+  a { color: var(--accent); }
+
+  /* ---------- 站点头部 ---------- */
+  .site-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 20px 22px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .25);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 2px;
+  }
+
+  .logo-dot {
+    width: 14px; height: 14px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, var(--snake), var(--accent));
+    box-shadow: 0 0 12px rgba(52, 211, 153, .6);
+    flex: none;
+  }
+
+  .logo-text b {
+    background: linear-gradient(90deg, var(--snake), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 800;
+  }
+
+  .tagline {
+    color: var(--muted);
+    font-size: 14px;
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .gh-link {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 14px;
+    transition: color .15s, border-color .15s;
+    white-space: nowrap;
+  }
+
+  .gh-link:hover { color: var(--text); border-color: rgba(56, 189, 248, .5); }
+
+  /* ---------- 区块通用 ---------- */
+  .section-head { margin-bottom: 14px; }
+
+  .section-head h2 {
+    font-size: 19px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-head h2::before {
+    content: "";
+    width: 4px; height: 18px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--snake), var(--accent));
+  }
+
+  .section-sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+
+  /* ---------- 我们的游戏：卡片 + 游玩区 ---------- */
+  .game-layout {
+    display: grid;
+    grid-template-columns: minmax(260px, 330px) minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+
+  .game-cards {
+    display: grid;
+    gap: 14px;
+  }
+
+  .game-card {
+    width: 100%;
+    text-align: left;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform .15s, border-color .15s, box-shadow .15s, background .15s;
+  }
+
+  .game-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(56, 189, 248, .45);
+  }
+
+  .game-card.active {
+    border-color: rgba(52, 211, 153, .55);
+    background: linear-gradient(180deg, rgba(52, 211, 153, .08), rgba(19, 26, 46, .9));
+    box-shadow: 0 0 0 1px rgba(52, 211, 153, .2), 0 8px 28px rgba(52, 211, 153, .12);
+  }
+
+  .card-top { display: flex; align-items: center; gap: 10px; }
+
+  .card-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: var(--board);
+    border: 1px solid var(--line);
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    flex: none;
+  }
+
+  .card-name { font-size: 16px; font-weight: 700; flex: 1; }
+
+  .card-play {
+    font-size: 12px;
+    color: var(--snake);
+    opacity: 0;
+    transition: opacity .15s;
+    white-space: nowrap;
+  }
+
+  .game-card:hover .card-play { opacity: .75; }
+  .game-card.active .card-play { opacity: 1; }
+
+  .card-desc { font-size: 13px; color: var(--muted); }
+
+  .card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .tag {
+    font-size: 11px;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 2px 10px;
+    background: rgba(16, 24, 48, .6);
+  }
+
+  .game-card.active .tag { color: var(--accent); border-color: rgba(56, 189, 248, .3); }
+
+  .cards-empty {
+    color: var(--muted);
+    font-size: 14px;
+    background: var(--panel);
+    border: 1px dashed var(--line);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  /* 游玩区 */
+  .player {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 14px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .25);
+  }
+
+  .player-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 2px 4px 12px;
+    flex-wrap: wrap;
+  }
+
+  .player-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+
+  .player-title .live-dot {
+    width: 8px; height: 8px;
+    border-radius: 3px;
+    background: linear-gradient(135deg, var(--snake), var(--accent));
+    box-shadow: 0 0 10px rgba(52, 211, 153, .6);
+  }
+
+  .player-open {
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid rgba(56, 189, 248, .35);
+    border-radius: 999px;
+    padding: 5px 14px;
+    transition: background .15s, color .15s;
+    white-space: nowrap;
+  }
+
+  .player-open:hover { background: rgba(56, 189, 248, .12); }
+
+  .player-frame {
+    display: block;
+    width: 100%;
+    height: clamp(480px, 72vh, 700px);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--board);
+  }
+
+  .player-empty {
+    height: 320px;
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+    font-size: 14px;
+    border: 1px dashed var(--line);
+    border-radius: 12px;
+    background: var(--board);
+  }
+
+  /* ---------- 游戏评测 ---------- */
+  .review-list { list-style: none; display: grid; gap: 12px; }
+
+  .review-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform .15s, border-color .15s;
+  }
+
+  .review-item:hover {
+    transform: translateY(-2px);
+    border-color: rgba(56, 189, 248, .45);
+  }
+
+  .grade-badge {
+    width: 44px; height: 44px;
+    border-radius: 13px;
+    display: grid;
+    place-items: center;
+    font-size: 19px;
+    font-weight: 800;
+    flex: none;
+  }
+
+  .grade-A { color: var(--snake); background: rgba(52, 211, 153, .12); border: 1px solid rgba(52, 211, 153, .4); }
+  .grade-B { color: var(--accent); background: rgba(56, 189, 248, .12); border: 1px solid rgba(56, 189, 248, .4); }
+  .grade-C { color: #fbbf24; background: rgba(251, 191, 36, .1); border: 1px solid rgba(251, 191, 36, .35); }
+  .grade-D { color: var(--food); background: rgba(251, 113, 133, .1); border: 1px solid rgba(251, 113, 133, .35); }
+
+  .review-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+
+  .review-title {
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .review-score {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--snake);
+    background: rgba(52, 211, 153, .1);
+    border: 1px solid rgba(52, 211, 153, .3);
+    border-radius: 999px;
+    padding: 1px 10px;
+  }
+
+  .review-comment { font-size: 13px; color: var(--text); }
+
+  .review-file { font-size: 12px; color: var(--muted); font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+
+  .review-arrow { color: var(--muted); font-size: 16px; flex: none; transition: color .15s, transform .15s; }
+
+  .review-item:hover .review-arrow { color: var(--accent); transform: translate(2px, -2px); }
+
+  /* ---------- 页脚 ---------- */
+  .site-footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+    display: grid;
+    gap: 6px;
+  }
+
+  .site-footer a { color: var(--muted); text-decoration: none; }
+  .site-footer a:hover { color: var(--accent); }
+
+  /* ---------- 响应式：手机竖排 ---------- */
+  @media (max-width: 920px) {
+    .page { gap: 28px; padding: 16px 14px 32px; }
+
+    .site-header { align-items: flex-start; }
+
+    .game-layout { grid-template-columns: 1fr; }
+
+    /* 卡片变成横向滑动的「Tab」排 */
+    .game-cards {
+      display: flex;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x proximity;
+    }
+
+    .game-card { min-width: 250px; scroll-snap-align: start; }
+
+    .player-frame { height: min(72vh, 560px); }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ======== 站点头部 ======== -->
+  <header class="site-header">
+    <a class="logo" href="index.html" aria-label="minigame-hub 首页">
+      <span class="logo-dot"></span>
+      <span class="logo-text">minigame<b>-hub</b></span>
+    </a>
+    <p class="tagline">收集好游戏，也做自己的游戏</p>
+    <a class="gh-link" href="https://github.com/wuxiumu/minigame-hub" target="_blank" rel="noopener">GitHub ↗</a>
+  </header>
+
+  <main style="display: flex; flex-direction: column; gap: 36px;">
+
+    <!-- ======== 我们的游戏 ======== -->
+    <section class="section" id="games-section">
+      <div class="section-head">
+        <h2>我们的游戏</h2>
+        <p class="section-sub">点击卡片即点即玩 · 新游戏只需在数据数组中追加一项</p>
+      </div>
+
+      <div class="game-layout">
+        <!-- 卡片式 Tab 列表（JS 数组驱动） -->
+        <div class="game-cards" id="gameCards" role="tablist" aria-label="游戏列表"></div>
+
+        <!-- 游玩大区域 -->
+        <div class="player" id="player">
+          <div class="player-bar">
+            <div class="player-title"><span class="live-dot"></span><span id="playerTitle">未选择游戏</span></div>
+            <a class="player-open" id="playerOpen" href="#" target="_blank" rel="noopener">新窗口打开 ↗</a>
+          </div>
+          <div id="playerBody">
+            <div class="player-empty">从左侧选择一款游戏开始</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== 游戏评测 ======== -->
+    <section class="section" id="reviews-section">
+      <div class="section-head">
+        <h2>游戏评测</h2>
+        <p class="section-sub">games/ 目录收录的评测档案 · 点击查看 GitHub 原文</p>
+      </div>
+      <ul class="review-list" id="reviewList"></ul>
+    </section>
+
+  </main>
+
+  <!-- ======== 页脚 ======== -->
+  <footer class="site-footer">
+    <p>minigame-hub · 收集好游戏，也做自己的游戏</p>
+    <p><a href="https://github.com/wuxiumu/minigame-hub" target="_blank" rel="noopener">github.com/wuxiumu/minigame-hub ↗</a></p>
+  </footer>
+
+</div>
+
+<script>
+  /* =========================================================
+   * 数据区：新增游戏 / 新增评测只需在对应数组里追加一项
+   * ========================================================= */
+
+  // 游戏列表（卡片式 Tab 由该数组驱动）
+  const GAMES = [
+    {
+      id: 'snake',
+      name: '贪吃蛇',
+      icon: '🐍',
+      desc: '经典街机贪吃蛇：方向键或滑动控制移动，吃食物变长，撞墙或咬到自己即结束。',
+      tags: ['街机', '单人', '键盘 / 触屏'],
+      path: 'dev/snake/index.html'
+    },
+    // 新游戏示例（取消注释并替换即可上线）：
+    // {
+    //   id: '2048',
+    //   name: '2048',
+    //   icon: '🔢',
+    //   desc: '滑动合并相同数字，冲击 2048。',
+    //   tags: ['益智', '单人', '键盘 / 触屏'],
+    //   path: 'dev/2048/index.html'
+    // },
+  ];
+
+  // 游戏评测（games/ 目录收录的评测档案摘要）
+  const REVIEWS = [
+    {
+      game: '2048',
+      grade: 'A',
+      score: 18,
+      comment: '用最简单的规则做出最强的再来一局魔力。',
+      file: 'games/2048.md',
+      url: 'https://github.com/wuxiumu/minigame-hub/blob/main/games/2048.md'
+    },
+    // 新评测示例：
+    // { game: '贪吃蛇', grade: 'B', score: 15, comment: '…', file: 'games/snake.md', url: 'https://github.com/…' },
+  ];
+
+  /* =========================================================
+   * 渲染逻辑
+   * ========================================================= */
+
+  const $ = (id) => document.getElementById(id);
+
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+
+  // ---- 游戏卡片 ----
+  function renderGames() {
+    const wrap = $('gameCards');
+    wrap.innerHTML = '';
+
+    if (!GAMES.length) {
+      wrap.innerHTML = '<div class="cards-empty">暂无游戏，欢迎来做一个 🎮</div>';
+      return;
+    }
+
+    GAMES.forEach((g) => {
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'game-card';
+      card.id = `game-card-${esc(g.id)}`;
+      card.setAttribute('role', 'tab');
+      card.setAttribute('aria-selected', 'false');
+      card.innerHTML = `
+        <span class="card-top">
+          <span class="card-icon">${esc(g.icon)}</span>
+          <span class="card-name">${esc(g.name)}</span>
+          <span class="card-play">▶ 开玩</span>
+        </span>
+        <span class="card-desc">${esc(g.desc)}</span>
+        <span class="card-tags">${g.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</span>
+      `;
+      card.addEventListener('click', () => selectGame(g.id));
+      wrap.appendChild(card);
+    });
+  }
+
+  // ---- 选中游戏：加载 iframe ----
+  function selectGame(id) {
+    const g = GAMES.find((x) => x.id === id);
+    if (!g) return;
+
+    document.querySelectorAll('.game-card').forEach((c) => {
+      const active = c.id === `game-card-${id}`;
+      c.classList.toggle('active', active);
+      c.setAttribute('aria-selected', String(active));
+    });
+
+    $('playerTitle').textContent = g.name;
+
+    const open = $('playerOpen');
+    open.href = g.path;
+
+    const body = $('playerBody');
+    if (body.querySelector('.player-empty')) body.innerHTML = '';
+
+    const frame = $('gameFrame');
+    if (frame && frame.dataset.game === id) return; // 已在玩，避免重载
+    if (frame) frame.remove();
+
+    const f = document.createElement('iframe');
+    f.id = 'gameFrame';
+    f.className = 'player-frame';
+    f.title = `${g.name}（游戏画面）`;
+    f.dataset.game = id;
+    f.setAttribute('allow', 'fullscreen');
+    f.src = g.path;
+    body.appendChild(f);
+  }
+
+  // ---- 评测列表 ----
+  function renderReviews() {
+    const list = $('reviewList');
+    list.innerHTML = '';
+
+    if (!REVIEWS.length) {
+      list.innerHTML = '<li><div class="cards-empty">暂无评测档案</div></li>';
+      return;
+    }
+
+    REVIEWS.forEach((r) => {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <a class="review-item" href="${esc(r.url)}" target="_blank" rel="noopener">
+          <span class="grade-badge grade-${esc(r.grade)}">${esc(r.grade)}</span>
+          <span class="review-main">
+            <span class="review-title">${esc(r.game)}<span class="review-score">${esc(r.score)} 分</span></span>
+            <span class="review-comment">“${esc(r.comment)}”</span>
+            <span class="review-file">${esc(r.file)}</span>
+          </span>
+          <span class="review-arrow">↗</span>
+        </a>
+      `;
+      list.appendChild(li);
+    });
+  }
+
+  // ---- 初始化 ----
+  renderGames();
+  renderReviews();
+  if (GAMES.length) selectGame(GAMES[0].id); // 默认加载第一款游戏
+</script>
+</body>
+</html>
