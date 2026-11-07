@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>og-image poster 1200x630</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+
+  body {
+    background:
+      radial-gradient(700px 380px at 18% 0%, rgba(168, 85, 247, .35), transparent 62%),
+      radial-gradient(640px 380px at 88% 12%, rgba(255, 45, 155, .28), transparent 60%),
+      radial-gradient(600px 420px at 50% 115%, rgba(34, 211, 238, .18), transparent 62%),
+      #0d0817;
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    color: #f1ecff;
+    position: relative;
+  }
+
+  /* 顶部彩带 */
+  .strip {
+    height: 14px;
+    background: linear-gradient(90deg, #db2777, #7c3aed, #0891b2, #db2777);
+    box-shadow: 0 4px 24px rgba(219, 39, 119, .6);
+  }
+
+  /* 透视网格地板 */
+  .floor {
+    position: absolute;
+    left: -25%; right: -25%;
+    bottom: -6%;
+    height: 50%;
+    background-image:
+      linear-gradient(rgba(34, 211, 238, .22) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 45, 155, .16) 1px, transparent 1px);
+    background-size: 46px 46px;
+    transform: perspective(340px) rotateX(64deg);
+    transform-origin: top center;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 40%);
+    mask-image: linear-gradient(to bottom, transparent, #000 40%);
+  }
+
+  .kicker {
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 12px;
+    text-indent: 12px;
+    color: #22d3ee;
+    text-shadow: 0 0 18px rgba(34, 211, 238, .9);
+  }
+
+  h1 {
+    position: absolute;
+    top: 108px; left: 0; right: 0;
+    text-align: center;
+    font-size: 148px;
+    font-weight: 900;
+    letter-spacing: .12em;
+    text-indent: .12em;
+    color: #fff;
+    text-shadow:
+      0 0 8px #fff,
+      0 0 24px #ff2d9b,
+      0 0 56px #ff2d9b,
+      0 0 110px #c026d3,
+      0 0 170px #c026d3;
+  }
+
+  .en {
+    position: absolute;
+    top: 292px; left: 0; right: 0;
+    text-align: center;
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: .6em;
+    text-indent: .6em;
+    color: transparent;
+    -webkit-text-stroke: 1.2px rgba(34, 211, 238, .9);
+    text-shadow: 0 0 26px rgba(34, 211, 238, .55);
+  }
+
+  .sub {
+    position: absolute;
+    top: 360px; left: 0; right: 0;
+    text-align: center;
+    font-size: 26px;
+    color: #a89ec9;
+    letter-spacing: 3px;
+  }
+
+  .sub b { color: #fde047; font-weight: 700; }
+
+  /* 游戏图标阵列 */
+  .icons {
+    position: absolute;
+    top: 424px; left: 0; right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 26px;
+  }
+
+  .ic {
+    width: 96px; height: 96px;
+    border-radius: 24px;
+    display: grid;
+    place-items: center;
+    font-size: 52px;
+    background: rgba(26, 16, 48, .8);
+    border: 2px solid var(--c);
+    box-shadow: 0 0 26px var(--c);
+  }
+
+  .url {
+    position: absolute;
+    bottom: 34px; left: 0; right: 0;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #22d3ee;
+    text-shadow: 0 0 16px rgba(34, 211, 238, .8);
+    font-family: ui-monospace, Menlo, monospace;
+  }
+
+  .corner { position: absolute; font-size: 56px; opacity: .85; }
+  .c1 { left: 70px; top: 90px; filter: drop-shadow(0 0 16px rgba(255,45,155,.8)); }
+  .c2 { right: 70px; top: 90px; filter: drop-shadow(0 0 16px rgba(34,211,238,.8)); }
+  .c3 { left: 120px; bottom: 130px; filter: drop-shadow(0 0 16px rgba(253,224,71,.8)); }
+  .c4 { right: 120px; bottom: 130px; filter: drop-shadow(0 0 16px rgba(168,85,247,.8)); }
+</style>
+</head>
+<body>
+  <div class="strip"></div>
+  <div class="floor"></div>
+
+  <span class="corner c1">🕹️</span>
+  <span class="corner c2">👾</span>
+  <span class="corner c3">🎲</span>
+  <span class="corner c4">🎰</span>
+
+  <p class="kicker">FREE ONLINE ARCADE</p>
+  <h1>迷你游戏厅</h1>
+  <p class="en">MINIGAME HUB</p>
+  <p class="sub"><b>6 款自研小游戏</b> · 打开浏览器，现在就玩</p>
+
+  <div class="icons">
+    <span class="ic" style="--c:#4ade80">🐍</span>
+    <span class="ic" style="--c:#fde047">🔢</span>
+    <span class="ic" style="--c:#22d3ee">🧱</span>
+    <span class="ic" style="--c:#fb923c">🐤</span>
+    <span class="ic" style="--c:#ff2d9b">🎯</span>
+    <span class="ic" style="--c:#a855f7">💣</span>
+  </div>
+
+  <p class="url">wuxiumu.github.io/minigame-hub</p>
+</body>
+</html>
