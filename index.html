@@ -855,7 +855,7 @@
   <section class="section" id="reviews-section">
     <div class="section-head">
       <h2><span class="h-icon">🎟️</span>游戏评测 <span class="h-en">REVIEWS</span></h2>
-      <p class="section-sub">games/ 目录收录的评测档案 · 点击查看 GitHub 原文</p>
+      <p class="section-sub">评测档案已升级为博客版 · 点击阅读全文 · <a href="blog/index.html">进入游戏博客 →</a></p>
     </div>
     <ul class="review-list" id="reviewList"></ul>
   </section>
@@ -961,7 +961,7 @@
       score: 20,
       comment: '一个人 3 小时用 AI 搭出的多人飞行模拟器，9 天赚了 1.7 万美元。',
       file: 'games/flight-simulator-2025.md',
-      url: 'https://github.com/wuxiumu/minigame-hub/blob/main/games/flight-simulator-2025.md'
+      url: 'blog/flight-simulator-2025.html'
     },
     {
       game: 'Suika Game（合成大西瓜）',
@@ -969,7 +969,7 @@
       score: 19,
       comment: '下落+碰撞+合成三件套，物理引擎类小游戏是 AI 的舒适区。',
       file: 'games/suika-game.md',
-      url: 'https://github.com/wuxiumu/minigame-hub/blob/main/games/suika-game.md'
+      url: 'blog/suika-game.html'
     },
     {
       game: '2048',
@@ -977,7 +977,7 @@
       score: 18,
       comment: '用最简单的规则做出最强的再来一局魔力。',
       file: 'games/2048.md',
-      url: 'https://github.com/wuxiumu/minigame-hub/blob/main/games/2048.md'
+      url: 'blog/2048.html'
     },
     {
       game: 'Ophidian（极简贪吃蛇）',
@@ -985,7 +985,7 @@
       score: 16,
       comment: 'Claude 写的贪吃蛇，自带屏幕方向键，是我们自研蛇的移动端参照。',
       file: 'games/ophidian.md',
-      url: 'https://github.com/wuxiumu/minigame-hub/blob/main/games/ophidian.md'
+      url: 'blog/ophidian.html'
     },
     {
       game: 'Otherlife / 人生岔路',
@@ -993,7 +993,7 @@
       score: 16,
       comment: '中文像素人生模拟，文本+数值+分支的结构特别适合 AI 生成。',
       file: 'games/otherlife.md',
-      url: 'https://github.com/wuxiumu/minigame-hub/blob/main/games/otherlife.md'
+      url: 'blog/otherlife.html'
     },
     {
       game: 'Sortaballs（分球谜题）',
@@ -1001,7 +1001,7 @@
       score: 16,
       comment: 'DeepSeek 开发，1000+ 关卡全部用最优解算法校准过难度。',
       file: 'games/sortaballs.md',
-      url: 'https://github.com/wuxiumu/minigame-hub/blob/main/games/sortaballs.md'
+      url: 'blog/sortaballs.html'
     },
     {
       game: 'Ink Side Down（墨面朝下）',
@@ -1009,7 +1009,7 @@
       score: 15,
       comment: 'AI 自主设计玩法的每日逻辑谜题，Wordle 式回访钩子。',
       file: 'games/ink-side-down.md',
-      url: 'https://github.com/wuxiumu/minigame-hub/blob/main/games/ink-side-down.md'
+      url: 'blog/ink-side-down.html'
     },
     {
       game: 'Space Defenders',
@@ -1017,7 +1017,7 @@
       score: 14,
       comment: '一段提示词生成的太空侵略者，AI 做单屏射击的下限参照。',
       file: 'games/space-defenders.md',
-      url: 'https://github.com/wuxiumu/minigame-hub/blob/main/games/space-defenders.md'
+      url: 'blog/space-defenders.html'
     },
     // 新评测示例：
     // { game: '贪吃蛇', grade: 'B', score: 15, comment: '…', file: 'games/snake.md', url: 'https://github.com/…' },
@@ -1137,9 +1137,10 @@
     }
 
     REVIEWS.forEach((r) => {
+      const external = /^https?:\/\//.test(r.url);
       const li = document.createElement('li');
       li.innerHTML = `
-        <a class="review-item" href="${esc(r.url)}" target="_blank" rel="noopener">
+        <a class="review-item" href="${esc(r.url)}"${external ? ' target="_blank" rel="noopener"' : ''}>
           <span class="grade-badge grade-${esc(r.grade)}">${esc(r.grade)}</span>
           <span class="review-main">
             <span class="review-title">${esc(r.game)}<span class="review-score">${esc(r.score)} 分</span></span>
