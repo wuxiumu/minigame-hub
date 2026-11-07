@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sortaballs（分球谜题） · 游戏评测 | 迷你游戏厅博客</title>
+<meta name="description" content="DeepSeek 写的分球解谜：10 种棋盘模式、1000+ 关卡，每关都用最优解算法校准过难度。">
+<link rel="canonical" href="https://wuxiumu.github.io/minigame-hub/blog/sortaballs.html">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sortaballs（分球谜题） · 游戏评测 | 迷你游戏厅博客">
+<meta property="og:description" content="DeepSeek 写的分球解谜：10 种棋盘模式、1000+ 关卡，每关都用最优解算法校准过难度。">
+<meta property="og:url" content="https://wuxiumu.github.io/minigame-hub/blog/sortaballs.html">
+<meta property="og:image" content="https://wuxiumu.github.io/minigame-hub/assets/og-image.png">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0d0817; --panel: rgba(26, 16, 48, .72); --line: rgba(167, 139, 250, .16);
+    --text: #f1ecff; --muted: #a89ec9;
+    --pink: #ff2d9b; --cyan: #22d3ee; --yellow: #fde047; --green: #4ade80; --purple: #a855f7;
+  }
+  body {
+    background:
+      radial-gradient(900px 500px at 15% -5%, rgba(168, 85, 247, .22), transparent 60%),
+      radial-gradient(800px 500px at 90% 10%, rgba(255, 45, 155, .16), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", -apple-system, "Segoe UI", sans-serif;
+    min-height: 100vh; line-height: 1.7;
+  }
+  a { color: var(--cyan); }
+  .topbar {
+    max-width: 900px; margin: 0 auto; padding: 18px 20px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); font-size: 18px; font-weight: 800; }
+  .logo-dot { width: 12px; height: 12px; border-radius: 4px; background: linear-gradient(135deg, var(--pink), var(--cyan)); box-shadow: 0 0 12px rgba(255,45,155,.8); }
+  .nav { display: flex; gap: 8px; flex-wrap: wrap; }
+  .nav a {
+    font-size: 13px; color: var(--muted); text-decoration: none;
+    border: 1px solid var(--line); border-radius: 999px; padding: 5px 14px; transition: .15s;
+  }
+  .nav a:hover, .nav a.on { color: var(--cyan); border-color: rgba(34,211,238,.5); box-shadow: 0 0 14px rgba(34,211,238,.25); }
+  .page { max-width: 900px; margin: 0 auto; padding: 10px 20px 60px; }
+
+  /* 列表页 */
+  .blog-head { text-align: center; padding: 26px 0 30px; }
+  .blog-head h1 {
+    font-size: clamp(30px, 6vw, 44px); font-weight: 900; letter-spacing: 3px; color: #fff;
+    text-shadow: 0 0 6px #fff, 0 0 18px var(--pink), 0 0 42px var(--pink), 0 0 90px #c026d3;
+  }
+  .blog-head .en { margin-top: 8px; font-size: 14px; font-weight: 800; letter-spacing: 6px; color: transparent; -webkit-text-stroke: 1px rgba(34,211,238,.85); }
+  .blog-head p { margin-top: 12px; color: var(--muted); font-size: 14px; }
+  .post-list { list-style: none; display: grid; gap: 14px; }
+  .post-item {
+    position: relative; display: flex; align-items: center; gap: 16px;
+    padding: 18px 22px 18px 26px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 16px;
+    text-decoration: none; color: inherit; transition: .15s;
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  }
+  .post-item::before { content: ""; position: absolute; left: 0; top: 14px; bottom: 14px; border-left: 2px dashed rgba(167,139,250,.35); }
+  .post-item:hover { transform: translateY(-2px); border-color: rgba(255,45,155,.4); box-shadow: 0 0 22px rgba(255,45,155,.15); }
+  .grade-badge {
+    width: 48px; height: 48px; border-radius: 13px; display: grid; place-items: center;
+    font-size: 21px; font-weight: 900; flex: none;
+  }
+  .grade-A { color: var(--green); background: rgba(74,222,128,.1); border: 1px solid rgba(74,222,128,.45); text-shadow: 0 0 12px rgba(74,222,128,.7); }
+  .grade-B { color: var(--cyan); background: rgba(34,211,238,.1); border: 1px solid rgba(34,211,238,.45); text-shadow: 0 0 12px rgba(34,211,238,.7); }
+  .grade-C { color: var(--yellow); background: rgba(253,224,71,.1); border: 1px solid rgba(253,224,71,.4); }
+  .grade-D { color: var(--pink); background: rgba(255,45,155,.1); border: 1px solid rgba(255,45,155,.4); }
+  .post-main { flex: 1; min-width: 0; }
+  .post-title { font-size: 17px; font-weight: 800; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .post-score { font-size: 12px; font-weight: 700; color: var(--yellow); background: rgba(253,224,71,.08); border: 1px solid rgba(253,224,71,.3); border-radius: 999px; padding: 1px 10px; }
+  .post-comment { font-size: 13px; color: var(--text); margin-top: 3px; }
+  .post-date { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .post-arrow { color: var(--muted); font-size: 17px; flex: none; }
+  .post-item:hover .post-arrow { color: var(--pink); }
+
+  /* 文章页 */
+  .article {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 22px;
+    padding: clamp(22px, 5vw, 44px);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 20px 50px rgba(0,0,0,.35);
+  }
+  .article-head { border-bottom: 1px solid var(--line); padding-bottom: 20px; margin-bottom: 24px; }
+  .article-head h1 { font-size: clamp(26px, 5vw, 36px); font-weight: 900; letter-spacing: 1px; line-height: 1.3; }
+  .article-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; align-items: center; }
+  .chip {
+    font-size: 12px; color: var(--muted); border: 1px solid var(--line);
+    border-radius: 999px; padding: 3px 12px; background: rgba(13,8,23,.6);
+  }
+  .chip.grade { font-weight: 900; font-size: 13px; }
+  .article-body h2 {
+    font-size: 20px; font-weight: 800; margin: 30px 0 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .article-body h2::before { content: ""; width: 4px; height: 18px; border-radius: 2px; background: linear-gradient(180deg, var(--pink), var(--cyan)); flex: none; }
+  .article-body h3 { font-size: 16px; margin: 22px 0 10px; color: var(--cyan); }
+  .article-body p { margin: 10px 0; }
+  .article-body ul, .article-body ol { padding-left: 24px; margin: 10px 0; }
+  .article-body li { margin: 6px 0; }
+  .article-body li::marker { color: var(--pink); }
+  .article-body strong { color: var(--yellow); }
+  .article-body a { text-decoration: none; border-bottom: 1px dashed rgba(34,211,238,.5); }
+  .article-body a:hover { text-shadow: 0 0 10px rgba(34,211,238,.6); }
+  .article-body blockquote {
+    border-left: 3px solid var(--purple); background: rgba(168,85,247,.08);
+    padding: 10px 16px; border-radius: 0 10px 10px 0; color: var(--muted); margin: 14px 0;
+  }
+  .article-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  .article-body th, .article-body td { border: 1px solid var(--line); padding: 9px 12px; text-align: left; }
+  .article-body th { background: rgba(168,85,247,.12); color: var(--cyan); font-weight: 700; }
+  .article-body tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+  .article-body code { background: rgba(13,8,23,.8); border: 1px solid var(--line); border-radius: 6px; padding: 1px 7px; font-size: 13px; }
+  .article-foot { margin-top: 34px; padding-top: 20px; border-top: 1px solid var(--line); display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+    font-size: 14px; font-weight: 700; padding: 10px 20px; border-radius: 999px; transition: .15s;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--pink), var(--purple)); color: #fff; box-shadow: 0 0 18px rgba(255,45,155,.4); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(255,45,155,.65); }
+  .btn-ghost { border: 1.5px solid rgba(34,211,238,.5); color: var(--cyan); }
+  .btn-ghost:hover { transform: translateY(-2px); box-shadow: 0 0 18px rgba(34,211,238,.3); }
+  .site-footer { text-align: center; color: var(--muted); font-size: 13px; padding: 30px 20px 40px; }
+  .site-footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a class="logo" href="../index.html"><span class="logo-dot"></span><span>minigame-hub</span></a>
+    <nav class="nav">
+      <a href="../index.html">🎰 游戏厅</a>
+      <a href="index.html">🎟️ 博客</a>
+      <a href="https://github.com/wuxiumu/minigame-hub" target="_blank" rel="noopener">GitHub ↗</a>
+    </nav>
+  </div>
+<main class="page">
+  <article class="article">
+    <header class="article-head">
+      <h1>Sortaballs（分球谜题）</h1>
+      <div class="article-meta">
+        <span class="chip grade grade-A">A 级 · 16 分</span>
+        <span class="chip">收录于 2026-11-07</span>
+      </div>
+    </header>
+    <div class="article-body">
+<h2>基本信息</h2>
+<ul>
+<li>名称：Sortaballs</li>
+<li>平台：网页</li>
+<li>类型：益智 / 排序解谜</li>
+<li>链接：https://sortaballs.vercel.app/</li>
+<li>开发商：个人开发者（DeepSeek + OpenCode 开发）</li>
+<li>收录日期：2026-11-07</li>
+</ul>
+<h2>一句话点评</h2>
+<p>DeepSeek 写的分球解谜：10 种棋盘模式、1000+ 关卡，每关都用最优解算法校准过难度。</p>
+<h2>评分（参考 reviews/rubric.md）</h2>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>分数(1-5)</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>玩法循环</td>
+<td>4</td>
+<td>倒球排序，规则清晰有深度</td>
+</tr>
+<tr>
+<td>美术表现</td>
+<td>3</td>
+<td>干净的功能风</td>
+</tr>
+<tr>
+<td>上手成本</td>
+<td>4</td>
+<td>看一次就懂</td>
+</tr>
+<tr>
+<td>留存设计</td>
+<td>4</td>
+<td>1000+ 关卡 + 多模式，内容量管够</td>
+</tr>
+<tr>
+<td>变现模式</td>
+<td>1</td>
+<td>无变现</td>
+</tr>
+<tr>
+<td><strong>总分</strong></td>
+<td><strong>16 / A</strong></td>
+<td>优秀，重点学习</td>
+</tr>
+</tbody>
+</table>
+<h2>亮点拆解</h2>
+<ul>
+<li>国产模型（DeepSeek）开发代表案例，打破「只有 Claude 能写游戏」的印象</li>
+<li>关卡质量用最优解求解器（optimal solver）反向校准——这是 AI 时代关卡设计的新范式</li>
+<li>内容量打法：1000+ 关卡用程序化方式生成，人工不可能完成</li>
+</ul>
+<h2>可借鉴到自研的点</h2>
+<ul>
+<li>谜题类游戏可以用求解器自动验证关卡可解性和难度曲线</li>
+<li>海量关卡 = 长尾内容壁垒，AI 生成 + 算法校验是标准流水线</li>
+</ul>
+<h2>备注</h2>
+<blockquote>
+<p>初步评分基于公开资料与榜单描述，实玩后校准。来源：<a target="_blank" rel="noopener" href="https://github.com/lappemic/awesome-ai-built-games">awesome-ai-built-games</a></p>
+</blockquote>
+
+    </div>
+    <footer class="article-foot">
+      <a class="btn btn-primary" href="index.html">🎟️ 更多评测</a>
+      <a class="btn btn-ghost" href="../index.html#games-section">🕹️ 去玩自研游戏</a>
+      <a class="btn btn-ghost" href="https://github.com/wuxiumu/minigame-hub/blob/main/games/sortaballs.md" target="_blank" rel="noopener">GitHub 原文 ↗</a>
+    </footer>
+  </article>
+</main>
+<footer class="site-footer">迷你游戏厅 minigame-hub · 收集好游戏，也做自己的游戏</footer>
+</body>
+</html>
