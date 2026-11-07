@@ -419,6 +419,24 @@
       <ul class="review-list" id="reviewList"></ul>
     </section>
 
+    <!-- ======== AI 游戏导航 ======== -->
+    <section class="section" id="nav-section">
+      <div class="section-head">
+        <h2>AI 游戏导航</h2>
+        <p class="section-sub">收录的 AI 制作小游戏 · 点击新窗口直接玩 · 标注了各自的开发工具</p>
+      </div>
+      <ul class="review-list" id="navList"></ul>
+    </section>
+
+    <!-- ======== 更多游戏库 ======== -->
+    <section class="section" id="dirs-section">
+      <div class="section-head">
+        <h2>更多游戏库</h2>
+        <p class="section-sub">持续发现 AI 小游戏的入口</p>
+      </div>
+      <ul class="review-list" id="dirList"></ul>
+    </section>
+
   </main>
 
   <!-- ======== 页脚 ======== -->
@@ -458,6 +476,22 @@
   // 游戏评测（games/ 目录收录的评测档案摘要）
   const REVIEWS = [
     {
+      game: 'Flight Simulator 2025',
+      grade: 'A',
+      score: 20,
+      comment: '一个人 3 小时用 AI 搭出的多人飞行模拟器，9 天赚了 1.7 万美元。',
+      file: 'games/flight-simulator-2025.md',
+      url: 'https://github.com/wuxiumu/minigame-hub/blob/main/games/flight-simulator-2025.md'
+    },
+    {
+      game: 'Suika Game（合成大西瓜）',
+      grade: 'A',
+      score: 19,
+      comment: '下落+碰撞+合成三件套，物理引擎类小游戏是 AI 的舒适区。',
+      file: 'games/suika-game.md',
+      url: 'https://github.com/wuxiumu/minigame-hub/blob/main/games/suika-game.md'
+    },
+    {
       game: '2048',
       grade: 'A',
       score: 18,
@@ -465,8 +499,67 @@
       file: 'games/2048.md',
       url: 'https://github.com/wuxiumu/minigame-hub/blob/main/games/2048.md'
     },
+    {
+      game: 'Ophidian（极简贪吃蛇）',
+      grade: 'A',
+      score: 16,
+      comment: 'Claude 写的贪吃蛇，自带屏幕方向键，是我们自研蛇的移动端参照。',
+      file: 'games/ophidian.md',
+      url: 'https://github.com/wuxiumu/minigame-hub/blob/main/games/ophidian.md'
+    },
+    {
+      game: 'Otherlife / 人生岔路',
+      grade: 'A',
+      score: 16,
+      comment: '中文像素人生模拟，文本+数值+分支的结构特别适合 AI 生成。',
+      file: 'games/otherlife.md',
+      url: 'https://github.com/wuxiumu/minigame-hub/blob/main/games/otherlife.md'
+    },
+    {
+      game: 'Sortaballs（分球谜题）',
+      grade: 'A',
+      score: 16,
+      comment: 'DeepSeek 开发，1000+ 关卡全部用最优解算法校准过难度。',
+      file: 'games/sortaballs.md',
+      url: 'https://github.com/wuxiumu/minigame-hub/blob/main/games/sortaballs.md'
+    },
+    {
+      game: 'Ink Side Down（墨面朝下）',
+      grade: 'B',
+      score: 15,
+      comment: 'AI 自主设计玩法的每日逻辑谜题，Wordle 式回访钩子。',
+      file: 'games/ink-side-down.md',
+      url: 'https://github.com/wuxiumu/minigame-hub/blob/main/games/ink-side-down.md'
+    },
+    {
+      game: 'Space Defenders',
+      grade: 'B',
+      score: 14,
+      comment: '一段提示词生成的太空侵略者，AI 做单屏射击的下限参照。',
+      file: 'games/space-defenders.md',
+      url: 'https://github.com/wuxiumu/minigame-hub/blob/main/games/space-defenders.md'
+    },
     // 新评测示例：
     // { game: '贪吃蛇', grade: 'B', score: 15, comment: '…', file: 'games/snake.md', url: 'https://github.com/…' },
+  ];
+
+  // AI 游戏导航（收录的 AI 小游戏，点击新窗口直接玩）
+  const NAV = [
+    { name: 'Flight Simulator 2025', icon: '✈️', desc: '多人飞行模拟 + 空中狗斗，AI 游戏的里程碑案例。', tools: 'Cursor · Grok 3 · Three.js', url: 'https://fly.pieter.com/' },
+    { name: 'Suika Game', icon: '🍉', desc: '物理合成大西瓜，排行榜加持，强再来一局。', tools: 'Cursor · Claude · Matter.js', url: 'https://suika.live/' },
+    { name: 'Ophidian', icon: '🐍', desc: '极简贪吃蛇，自带屏幕方向键，手机友好。', tools: 'Claude · PixiJS', url: 'https://ophidian.vercel.app/' },
+    { name: 'Otherlife / 人生岔路', icon: '🧬', desc: '中文像素人生模拟，抽个出生过完一生。', tools: 'Codex · React', url: 'https://lancerlsy.github.io/life-crossroads/' },
+    { name: 'Sortaballs', icon: '🔮', desc: '分球排序解谜，1000+ 关卡经最优解算法校准。', tools: 'DeepSeek · OpenCode', url: 'https://sortaballs.vercel.app/' },
+    { name: 'Ink Side Down', icon: '🎲', desc: '每日逻辑谜题：滚方块用墨面盖章。', tools: 'Claude Code 自主开发', url: 'https://arkai.win/games/ink-side-down/' },
+    { name: 'Space Defenders', icon: '👾', desc: '一句话提示词生成的太空侵略者。', tools: 'Claude 3.7 Sonnet', url: 'https://jasonleow.com/space-defenders/' },
+  ];
+
+  // 更多游戏库（持续发现 AI 小游戏的入口）
+  const DIRS = [
+    { name: 'Awesome AI-Built Games', icon: '⭐', desc: '最全的 AI 开发游戏榜单，按品类分组，标注工具和引擎。', tools: 'GitHub 榜单', url: 'https://github.com/lappemic/awesome-ai-built-games' },
+    { name: 'Player1AI', icon: '🎮', desc: '500+ 款 AI 浏览器游戏，可按手机/手柄/多人筛选。', tools: '游戏目录', url: 'https://player1ai.com/' },
+    { name: 'GameDaily.ai', icon: '📅', desc: '每天发布一款全新 AI 游戏，概念、代码、美术、音效全由 AI 完成。', tools: '每日上新', url: 'https://gamedaily.ai/' },
+    { name: 'Vibe Jam', icon: '🏆', desc: '年度 AI 游戏开发大赛，2025–2026 两届共 2000+ 参赛作品。', tools: 'Game Jam', url: 'https://vibejam.com/' },
   ];
 
   /* =========================================================
@@ -570,9 +663,37 @@
     });
   }
 
+  // ---- 导航 / 游戏库列表（共用渲染：图标 + 名称 + 简介 + 工具标签） ----
+  function renderLinkList(listId, items) {
+    const list = $(listId);
+    list.innerHTML = '';
+
+    if (!items.length) {
+      list.innerHTML = '<li><div class="cards-empty">暂无条目</div></li>';
+      return;
+    }
+
+    items.forEach((r) => {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <a class="review-item" href="${esc(r.url)}" target="_blank" rel="noopener">
+          <span class="grade-badge grade-B" style="font-size:20px;">${esc(r.icon)}</span>
+          <span class="review-main">
+            <span class="review-title">${esc(r.name)}<span class="review-score">${esc(r.tools)}</span></span>
+            <span class="review-comment">${esc(r.desc)}</span>
+          </span>
+          <span class="review-arrow">↗</span>
+        </a>
+      `;
+      list.appendChild(li);
+    });
+  }
+
   // ---- 初始化 ----
   renderGames();
   renderReviews();
+  renderLinkList('navList', NAV);
+  renderLinkList('dirList', DIRS);
   if (GAMES.length) selectGame(GAMES[0].id); // 默认加载第一款游戏
 </script>
 </body>
