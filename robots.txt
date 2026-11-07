@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://wuxiumu.github.io/minigame-hub/sitemap.xml
